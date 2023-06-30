@@ -15,14 +15,15 @@ import java.awt.event.KeyListener;
 import java.io.*;
 import java.util.ArrayList;
 
-	public class Canvas extends GLCanvas implements GLEventListener, KeyListener {
+public class Canvas extends GLCanvas implements GLEventListener, KeyListener {
+
 	private static final float SUN_RADIUS = 30f;
 	private FPSAnimator animator;
 	private GLU glu;
-	private Texture pamantTexture;
-	private Texture cerTexture;
-	private Texture noriTexture;
-	private Texture lunaTexture;
+	private Texture earthTexture;
+	private Texture skyTexture;
+	private Texture cloudsTexture;
+	private Texture moonTexture;
 	private ArrayList<Planet> planets;
 
 	private float Angle = 0;
@@ -36,6 +37,11 @@ import java.util.ArrayList;
 		addGLEventListener(this);
 	}
 
+	/*
+	* Textures provided by:
+	* https://www.freepik.com/free-photo/beautiful-shining-stars-night-sky_7631083.htm#query=stars&position=1&from_view=search&track=sph
+	* https://www.solarsystemscope.com/textures/
+	*/
 	@Override
 	public void init(GLAutoDrawable drawable) {
 		GL2 gl = drawable.getGL().getGL2();
@@ -51,11 +57,11 @@ import java.util.ArrayList;
 
 		// Earth
 		String textureFile = "F://Projects//GUIproject//src//main//resources//textures//earth.jpg";
-		pamantTexture = getObjectTexture(gl, textureFile);
-		textureFile = "F://Projects//GUIproject//src//main//resources//textures//stars.png";
-		cerTexture = getObjectTexture(gl, textureFile);
+		earthTexture = getObjectTexture(gl, textureFile);
+		textureFile = "F://Projects//GUIproject//src//main//resources//textures//galaxy.jpg";
+		skyTexture = getObjectTexture(gl, textureFile);
 		textureFile = "F://Projects//GUIproject//src//main//resources//textures//clouds.png";
-		noriTexture = getObjectTexture(gl, textureFile);
+		cloudsTexture = getObjectTexture(gl, textureFile);
 
 		// Sun
 		textureFile = "F://Projects//GUIproject//src//main//resources//textures//sun.jpg";
@@ -63,35 +69,35 @@ import java.util.ArrayList;
 
 		// Mercury
 		textureFile = "F://Projects//GUIproject//src//main//resources//textures//mercury.jpg";
-		Planet mercury = new Planet(getObjectTexture(gl, textureFile), gl, glu, SUN_RADIUS + 2f, 0.15f, 3.50f);
+		Planet mercury = new Planet(getObjectTexture(gl, textureFile), gl, glu, SUN_RADIUS + 2f, 0.15f, 2.50f);
 
 		// Venus
 		textureFile = "F://Projects//GUIproject//src//main//resources//textures//venus.jpg";
-		Planet venus = new Planet(getObjectTexture(gl, textureFile), gl, glu, SUN_RADIUS + 12f, 0.25f, 5.50f);
+		Planet venus = new Planet(getObjectTexture(gl, textureFile), gl, glu, SUN_RADIUS + 12f, 0.25f, 4.00f);
 
 		// Jupiter
 		textureFile = "F://Projects//GUIproject//src//main//resources//textures//jupiter.jpg";
-		Planet jupiter = new Planet(getObjectTexture(gl, textureFile), gl, glu, SUN_RADIUS + 65f, 0.35f, 9.50f);
+		Planet jupiter = new Planet(getObjectTexture(gl, textureFile), gl, glu, SUN_RADIUS + 65f, 0.35f, 11.00f);
 
 		// Mars
 		textureFile = "F://Projects//GUIproject//src//main//resources//textures//mars.jpg";
-		Planet mars = new Planet(getObjectTexture(gl, textureFile), gl, glu, SUN_RADIUS + 50f, 0.45f, 4.50f);
+		Planet mars = new Planet(getObjectTexture(gl, textureFile), gl, glu, SUN_RADIUS + 50f, 0.45f, 3.00f);
 
 		// Moon
 		textureFile = "F://Projects//GUIproject//src//main//resources//textures//moon.png";
-		lunaTexture = getObjectTexture(gl, textureFile);
+		moonTexture = getObjectTexture(gl, textureFile);
 
 		// Saturn
 		textureFile = "F://Projects//GUIproject//src//main//resources//textures//saturn.jpg";
-		Planet saturn = new Planet(getObjectTexture(gl, textureFile), gl, glu, SUN_RADIUS + 90f, 0.55f, 8.50f);
+		Planet saturn = new Planet(getObjectTexture(gl, textureFile), gl, glu, SUN_RADIUS + 90f, 0.55f, 10.00f);
 
 		// Uranus
 		textureFile = "F://Projects//GUIproject//src//main//resources//textures//uranus.jpg";
-		Planet uranus = new Planet(getObjectTexture(gl, textureFile), gl, glu, SUN_RADIUS + 105f, 0.65f, 7.50f);
+		Planet uranus = new Planet(getObjectTexture(gl, textureFile), gl, glu, SUN_RADIUS + 105f, 0.65f, 8.00f);
 
 		// Neptune
 		textureFile = "F://Projects//GUIproject//src//main//resources//textures//neptune.jpg";
-		Planet neptune = new Planet(getObjectTexture(gl, textureFile), gl, glu, SUN_RADIUS + 120f, 0.75f, 6.50f);
+		Planet neptune = new Planet(getObjectTexture(gl, textureFile), gl, glu, SUN_RADIUS + 120f, 0.75f, 7.50f);
 
 		planets.add(mercury);
 		planets.add(venus);
@@ -100,7 +106,6 @@ import java.util.ArrayList;
 		planets.add(saturn);
 		planets.add(uranus);
 		planets.add(neptune);
-
 	}
 
 	@Override
@@ -113,15 +118,19 @@ import java.util.ArrayList;
 			return;
 		}
 		final GL2 gl = glAutoDrawable.getGL().getGL2();
-		setCamera(gl, 300);
+		setCamera(gl, 250);
 		setLights(gl);
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+
+		gl.glEnable(GL2.GL_BLEND);
+		gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
+
 		sun.display();
 		drawEarthAndMoon(gl);
 		for (Planet p : planets)
 			p.display();
-		cerTexture.bind(gl);
-		cerTexture.enable(gl);
+		skyTexture.bind(gl);
+		skyTexture.enable(gl);
 		drawCube(gl);
 	}
 
@@ -140,8 +149,8 @@ import java.util.ArrayList;
 
 	private void drawMoon(GL2 gl) {
 		gl.glPushMatrix();
-		lunaTexture.enable(gl);
-		lunaTexture.bind(gl);
+		moonTexture.enable(gl);
+		moonTexture.bind(gl);
 		gl.glPushName(5);
 		Angle = (Angle + 1f) % 360f;
 		final float distance = 12.000f;
@@ -166,15 +175,16 @@ import java.util.ArrayList;
 	}
 
 	private void drawEarth(GL2 gl) {
-		float[] rgba = { 1f, 1f, 1f };
-		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, rgba, 0);
-		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, rgba, 0);
-		gl.glMaterialf(GL2.GL_FRONT, GL2.GL_SHININESS, 0.5f);
+		float[] rgba = { 1f, 1f, 1f, 1f }; // Set alpha to 0
+		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, rgba, 1);
+		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE, rgba, 0);
+		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, rgba, 1);
+
 
 		gl.glPushName(4);
 		earthAngle = (earthAngle + 0.1f) % 360f;
-		noriTexture.enable(gl);
-		noriTexture.bind(gl);
+		cloudsTexture.enable(gl);
+		cloudsTexture.bind(gl);
 		gl.glPushMatrix();
 		gl.glRotatef(earthAngle, 0.2f, 0.1f, 0);
 		final float radius = 6.378f;
@@ -187,8 +197,8 @@ import java.util.ArrayList;
 		glu.gluQuadricOrientation(clouds, GLU.GLU_OUTSIDE);
 		glu.gluQuadricTexture(clouds, true);
 		glu.gluSphere(clouds, 7, slices, stacks);
-		pamantTexture.enable(gl);
-		pamantTexture.bind(gl);
+		earthTexture.enable(gl);
+		earthTexture.bind(gl);
 		gl.glDisable(GL.GL_BLEND);
 
 		GLUquadric earth = glu.gluNewQuadric();
@@ -204,8 +214,8 @@ import java.util.ArrayList;
 	}
 
 	private void drawCube(GL gl) {
-		cerTexture.enable(gl);
-		cerTexture.bind(gl);
+		skyTexture.enable(gl);
+		skyTexture.bind(gl);
 		((GLPointerFunc) gl).glDisableClientState(GL2.GL_VERTEX_ARRAY);
 		final float radius = 200f;
 		final int slices = 15;
@@ -242,11 +252,12 @@ import java.util.ArrayList;
 		return tex;
 	}
 
+	//TODO 3 models o light
 	private void setLights(GL2 gl) {
 		float SHINE_ALL_DIRECTIONS = 1;
-		float[] lightPos = { 0, 0, 0, SHINE_ALL_DIRECTIONS };
-		float[] lightColorAmbient = { 0.5f, 0.5f, 0.5f, 1f };
-		float[] lightColorSpecular = { 0.8f, 0.8f, 0.8f, 1f };
+		float[] lightPos = { 1f, 1f, 1f, SHINE_ALL_DIRECTIONS };
+		float[] lightColorAmbient = { 1f, 1f, 1f, 0f };
+		float[] lightColorSpecular = { 0.5f, 0.5f, 0.5f, 0f };
 		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_POSITION, lightPos, 0);
 		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_AMBIENT, lightColorAmbient, 0);
 		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_SPECULAR, lightColorSpecular, 0);
